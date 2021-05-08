@@ -36,16 +36,19 @@ split:
 	jne split
 addf:
 	pop ax
-	mul ax
-	mul ax
+	mov bx, ax
+	mul bx
+	mul bx
 	mov word ptr m[0], ax
 	pop ax
-	mul ax
-	mul ax
+	mov bx, ax
+	mul bx
+	mul bx
 	mov word ptr m[2], ax
 	pop ax
-	mul ax
-	mul ax
+	mov bx, ax
+	mul bx
+	mul bx
 	mov word ptr m[4], ax
 	mov bx, word ptr m[0]
 	add bx, word ptr m[2]
@@ -53,9 +56,11 @@ addf:
 	pop ax
 	cmp ax, bx
 	jne next
+	push ax
 	push cx
 	call printf
 	pop cx
+	pop ax
 next:
 	inc ax
 	loop judge
@@ -86,4 +91,3 @@ printf endp
 
 CODES ENDS
     END START
-    
