@@ -5,6 +5,7 @@ DATAS SEGMENT
     primemsg db 'print prime',0ah,0dh,'$';输出素数的提示信息
 	countmsg db 0ah,0dh,'print prime of count',0ah,0dh,'$';输出素数个数提示
   	summsg   db 0ah,0dh,'print prime of sum',0ah,0dh,'$' ;输出素数和提示
+  	nl db 0ah,0dh, '$'
 DATAS ENDS
 
 STACKS SEGMENT
@@ -71,8 +72,24 @@ caculate endp
 
 
 disprime proc
-	mov cx, 10
+	mov cx, word ptr count[0]
 	mov bx, 0
+b:
+	cmp cx, 10
+	jnb l1
+	jmp l2
+l1:
+	sub cx, 10
+	push cx
+	mov cx, 10
+	jmp t
+l2:
+	mov dx, 0
+	push dx
+t:
+	lea dx, offset primemsg
+	mov ah, 9
+	int 21h
 pp:
 	mov ax, word ptr prime[bx]
 	push cx
@@ -82,11 +99,17 @@ pp:
 	pop cx
 	add bx, 2
 	
-	lea dx, offset primemsg
+	mov dl, 20h
+	mov ah, 2
+	int 21h
+	loop pp
+	lea dx, offset nl
 	mov ah, 9
 	int 21h
+	pop cx
+	cmp cx, 0
+	ja b
 	
-	loop pp
 	ret
 disprime endp
 
