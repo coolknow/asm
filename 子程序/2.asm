@@ -95,6 +95,7 @@ pp:
 	push cx
 	push bx
 	call printf
+	call delay
 	pop bx
 	pop cx
 	add bx, 2
@@ -103,6 +104,7 @@ pp:
 	mov ah, 2
 	int 21h
 	loop pp
+	
 	lea dx, offset nl
 	mov ah, 9
 	int 21h
@@ -154,6 +156,21 @@ PRINT:
 	LOOP PRINT
 	ret
 printf endp
+
+delay proc
+  push cx
+  push ax
+  mov ax,1000d
+ld1:
+  mov cx,1000d
+ld2:
+  loop ld2
+  dec ax
+  jnz ld1
+  pop ax
+  pop cx
+  ret
+delay endp
 
 
 CODES ENDS
