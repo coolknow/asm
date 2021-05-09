@@ -49,6 +49,8 @@ j2:
 	cmp ah, 0
 	je break
 	inc dl
+	pop ax
+	push ax
 	loop j2
 	pop ax
 	pop cx
@@ -69,11 +71,31 @@ caculate endp
 
 
 disprime proc
+	mov cx, 10
+	mov bx, 0
+pp:
+	mov ax, word ptr prime[bx]
+	push cx
+	push bx
+	call printf
+	pop bx
+	pop cx
+	add bx, 2
+	
+	lea dx, offset primemsg
+	mov ah, 9
+	int 21h
+	
+	loop pp
 	ret
 disprime endp
 
 
 dispcount proc
+	lea dx, offset countmsg
+	mov ah, 9
+	int 21h
+	
 	mov ax, word ptr count[0]
 	call printf
 	ret
@@ -81,6 +103,9 @@ dispcount endp
 
 
 dispsum proc
+	lea dx, offset summsg
+	mov ah, 9
+	int 21h
 	mov ax, word ptr sum[0]
 	call printf
 	ret
@@ -110,3 +135,4 @@ printf endp
 
 CODES ENDS
     END START
+
