@@ -23,6 +23,9 @@ START:
 ;-------------------------------
 ;-------------------------------
 input1 proc
+	push ax
+	push bx
+	push dx
 	mov bx, 0
 cin1:
 	push bx
@@ -61,11 +64,16 @@ exit:
 	add bx, 2
 	inc word ptr count[0]
 r:
+	pop dx
+	pop bx
+	pop ax
 	ret
 input1 endp
 ;-------------------------------
 ;-------------------------------
 input2 proc
+	push ax
+	push bx
 	mov bx, 0
 cin2:
 	mov ah, 1
@@ -81,11 +89,16 @@ cin2:
 	cmp word ptr count[0], 20
 	jb cin2
 exit:
+	pop bx
+	pop ax
 	ret
 input2 endp
 ;-------------------------------
 ;-------------------------------
 printseq proc
+	push cx
+	push bx
+	push ax
 	mov cx, word ptr count[0]
 	mov bx, 0
 p:
@@ -97,11 +110,18 @@ p:
 	pop cx
 	add bx, 2
 	loop p
+	pop ax
+	pop bx
+	pop cx
 	ret
 printseq endp
 ;-------------------------------
 ;-------------------------------
 printf proc
+	push cx
+	push dx
+	push bx
+	push ax
 	MOV CX, 0
 SPLITf:
 	MOV DX, 0
@@ -117,6 +137,10 @@ PRINT:
 	MOV AH, 02H
 	INT 21H
 	LOOP PRINT
+	pop ax
+	pop bx
+	pop dx
+	pop cx
 	ret
 printf endp
 ;-------------------------------
