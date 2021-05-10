@@ -1,6 +1,7 @@
 DATAS SEGMENT
     rawdata dw 20 dup(?)
     count dw 0
+    inbuff dw 0
 DATAS ENDS
 
 STACKS SEGMENT
@@ -13,17 +14,60 @@ START:
     MOV AX,DATAS
     MOV DS,AX
     
-    call input
+    call input1
     call printseq
     
     MOV AH,4CH
     INT 21H
-
+    
 ;-------------------------------
 ;-------------------------------
-input proc
+input1 proc
 	mov bx, 0
+cin1:
+	push bx
+	mov word ptr inbuff[0], 0
 cin:
+	mov ah, 1
+	int 21h
+
+	cmp al, 0dh
+	je exit
+	cmp al, 20h
+	je next
+	mov ah, 0
+	sub al, 30h
+	push ax
+	mov ax, word ptr inbuff[0]
+	mov bx, 10
+	mul bx
+	pop dx
+	add ax, dx
+	mov word ptr inbuff[0], ax
+	jmp cin
+next:
+	pop bx
+	mov ax, word ptr inbuff[0]
+	mov word ptr rawdata[bx], ax
+	add bx, 2
+	inc word ptr count[0]
+	cmp word ptr count[0], 20
+	jb cin1
+	jmp r
+exit:
+	pop bx
+	mov ax, word ptr inbuff[0]
+	mov word ptr rawdata[bx], ax
+	add bx, 2
+	inc word ptr count[0]
+r:
+	ret
+input1 endp
+;-------------------------------
+;-------------------------------
+input2 proc
+	mov bx, 0
+cin2:
 	mov ah, 1
 	int 21h
 	
@@ -35,10 +79,10 @@ cin:
 	add bx, 2
 	inc word ptr count[0]
 	cmp word ptr count[0], 20
-	jb cin
+	jb cin2
 exit:
 	ret
-input endp
+input2 endp
 ;-------------------------------
 ;-------------------------------
 printseq proc
@@ -80,5 +124,4 @@ printf endp
 
 CODES ENDS
     END START
-
-
+    
