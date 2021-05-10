@@ -2,6 +2,9 @@ DATAS SEGMENT
     rawdata dw 20 dup(?)
     count dw 0
     inbuff dw 0
+    max dw 0
+    min dw 0
+    sum dw 0
 DATAS ENDS
 
 STACKS SEGMENT
@@ -16,10 +19,91 @@ START:
     
     call input1
     call printseq
+    call setmax
+    call setmin
+    call sumf
+    
+    mov ax, word ptr max[0]
+    call printf
+    
+    mov ax, word ptr min[0]
+    call printf
+    
+    mov ax, word ptr sum[0]
+    call printf
     
     MOV AH,4CH
     INT 21H
-    
+
+;-------------------------------
+;-------------------------------
+sumf proc
+	push cx
+	push ax
+	push bx
+	mov cx, word ptr count[0]
+	mov ax, 0
+	mov bx, 0 
+l1:
+	add ax, word ptr rawdata[bx]
+	add bx, 2
+	loop l1
+	mov word ptr sum[0], ax
+	pop bx
+	pop ax
+	pop cx
+	ret
+sumf endp
+;-------------------------------
+;-------------------------------
+setmin proc
+	push cx
+	push ax
+	push bx
+	mov cx, word ptr count[0]
+	mov ax, word ptr rawdata[0]
+	mov bx, 0
+l1:
+	cmp ax, word ptr rawdata[bx]
+	ja l2
+	jmp lop
+l2:
+	mov ax, word ptr rawdata[bx]
+lop:
+	add bx, 2
+	loop l1
+exit:
+	mov word ptr min[0], ax
+	pop bx
+	pop ax
+	pop cx
+	ret
+setmin endp
+;-------------------------------
+;-------------------------------
+setmax proc
+	push cx
+	push ax
+	push bx
+	mov cx, word ptr count[0]
+	mov ax, word ptr rawdata[0]
+	mov bx, 0
+l1:
+	cmp ax, word ptr rawdata[bx]
+	jb l2
+	jmp lop
+l2:
+	mov ax, word ptr rawdata[bx]
+lop:
+	add bx, 2
+	loop l1
+exit:
+	mov word ptr max[0], ax
+	pop bx
+	pop ax
+	pop cx
+	ret
+setmax endp
 ;-------------------------------
 ;-------------------------------
 input1 proc
@@ -148,4 +232,3 @@ printf endp
 
 CODES ENDS
     END START
-    
