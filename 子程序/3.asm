@@ -1,5 +1,7 @@
 DATAS SEGMENT
     rawdata dw 20 dup(?)
+    data dw 20 dup(?)
+   	cdcount dw 0
     count dw 0
     inbuff dw 0
     max dw 0
@@ -32,9 +34,71 @@ START:
     mov ax, word ptr sum[0]
     call printf
     
+    call cleaner
+    call printdata
+    
     MOV AH,4CH
     INT 21H
 
+;-------------------------------
+;-------------------------------
+printdata proc
+	push cx
+	push bx
+	push ax
+	mov cx, word ptr cdcount[0]
+	mov bx, 0
+p:
+	mov ax, word ptr data[bx]
+	push cx
+	push bx
+	call printf
+	pop bx
+	pop cx
+	add bx, 2
+	loop p
+	pop ax
+	pop bx
+	pop cx
+	ret
+printdata endp
+;-------------------------------
+;-------------------------------
+cleaner proc
+	push ax
+	push bx
+	push cx
+
+	mov bx, 0
+	mov si, 0
+
+	mov cx, word ptr count[0]
+l4:
+	push cx
+	mov cx, 20
+	mov ax, word ptr rawdata[bx]
+l2:
+	cmp ax, word ptr data[si]
+	jne l1
+	jmp l3
+l1:
+	add si, 2
+	loop l2
+	mov si, word ptr cdcount[0]
+	add si, si
+	mov word ptr data[si], ax
+	inc word ptr cdcount[0]
+l3:
+	mov si, 0
+	add bx, 2
+	pop cx
+	loop l4
+	
+	pop cx
+	pop bx
+	pop ax
+	ret
+cleaner endp
 ;-------------------------------
 ;-------------------------------
 sumf proc
