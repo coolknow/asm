@@ -3,6 +3,7 @@ DATAS SEGMENT
     Count EQU ($-A)/2  ;数组中元素的个数(字节)
     nl db 0ah,0dh,'$'
     spc db 20h,'$'
+    divResult dw 1234
 DATAS ENDS
 
 STACKS SEGMENT
@@ -15,12 +16,62 @@ START:
     MOV AX,DATAS
     MOV DS,AX
     
-    call paixu
-    call printdata
+    ;call paixu
+    ;call printdata
+    
+    mov ax, 512
+    mov dl, 3
+    call divf
+    call printf2
 
     MOV AH,4CH
     INT 21H
 
+;-----------------------------------------
+;----------------------------------------- 
+divf proc ;; input ax,dl; value ax
+	mov dh, 0
+	push dx
+	mov bx, 100
+	mul bx  ;; ax * bx
+	pop bx
+	div bx
+	ret
+divf endp
+;-----------------------------------------
+;----------------------------------------- 
+printf2 proc
+	push cx
+	push dx
+	push bx
+	push ax
+	MOV CX, 0
+SPLITf:
+	MOV DX, 0
+	MOV BX, 10
+	DIV BX
+	PUSH DX 
+	INC CX
+	CMP AX, 0
+	JNE SPLITf
+PRINT:
+	cmp cx, 2
+	jne l1
+	mov DL, 2eh
+	MOV AH, 02H
+	INT 21H
+l1:
+	POP DX
+	ADD DL, 30H
+	MOV AH, 02H
+	INT 21H
+	LOOP PRINT
+	pop ax
+	pop bx
+	pop dx
+	pop cx
+	ret
+printf2 endp
 ;-----------------------------------------
 ;----------------------------------------- 
 space proc
