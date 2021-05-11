@@ -7,6 +7,7 @@ DATAS SEGMENT
     nl db 0ah, 0dh,'$'
     data dw 0,0
     sum dw 0
+    buff dw 0
 DATAS ENDS
 
 STACKS SEGMENT
@@ -38,7 +39,7 @@ m3:
     lea dx, offset tip1
     call tipf
     call inputOnce
-    sub al, 30h
+    call printf
     cmp ax, word ptr sum[0]
     je m1
     lea dx, offset tip3
@@ -51,7 +52,8 @@ m1:
 m2:
 	lea dx, offset tip4
 	call tipf
-	call inputOnce
+	mov ah, 1
+	int 21h
 	cmp al, 'R'
 	je start
 	
@@ -64,9 +66,23 @@ m2:
 ;-------------------------------------------
 ;------------------------------------------- 
 inputOnce proc ;; value is in AX
+	mov ax, 0
+l1:
+	push ax
 	mov ah, 1
 	int 21h
+	cmp al, 0dh
+	je l2
+	sub al, 30h
 	mov ah, 0
+	mov word ptr buff[0], ax
+	pop ax
+	mov bx, 10
+	mul bx
+	add ax, word ptr buff[0]
+	jmp l1
+l2:
+	pop ax
 	ret
 inputOnce endp
 ;-------------------------------------------
@@ -196,14 +212,3 @@ printf endp
 ;------------------------------------------- 
 CODES ENDS
     END START
-
-
-
-
-
-
-
-
-
-
-
